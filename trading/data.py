@@ -1,5 +1,8 @@
+import numpy as np
+#%%
+import numpy as np
+import matplotlib.pyplot as plt
 def generate_stock_price(days, initial_price, volatility):
-
     '''
     Generates daily closing share prices for a company,
     for a given number of days.
@@ -17,32 +20,37 @@ def generate_stock_price(days, initial_price, volatility):
         # Get the random normal increment
         inc = rng.normal()
         # Add stock_prices[day-1] to inc to get NewPriceToday
-        NewPriceToday=stock_price[day-1]+inc
+        NewPriceToday=stock_prices[day-1]+inc
+        duration = rng.integers(3, 14)
         # Make a function for the news
         def news(chance, volatility):
             '''
             Simulate the news with %chance
             '''
             # Choose whether there's news today
-            news_today = rng.choice([0,1], p=chance)
+
+            news_today = rng.choice([0,1], p=[0.5,0.5])
             if news_today:
                 # Calculate m and drift
                 m=rng.normal(0,0.3)
                 drift = m * volatility
                 # Randomly choose the duration
-                duration = rng.integers(7,7*12)
                 final = np.zeros(duration)
                 for i in range(duration):
                     final[i] = drift
                 return final
             else:
+                # Randomly choose the duration
                 return np.zeros(duration)
         # Get the drift from the news
         d = news(1, volatility)
         # Get the duration
-        duration = len(d)
         # Add the drift to the next days
-        totalDrift[day:day+duration] =d
+        try:
+            totalDrift[day:day+duration] =d
+        except:
+            duration=days-day
+            totalDrift[day:]=d[:duration]
         # Add today's drift to today's price
         NewPriceToday+=totalDrift[day]
         # Set stock_prices[day] to NewPriceToday or to NaN if it's negative
@@ -51,3 +59,16 @@ def generate_stock_price(days, initial_price, volatility):
         else:
             stock_prices[day] = NewPriceToday
     return stock_prices
+
+
+if __name__=="__main__":
+
+    # Make some data
+    N = 2
+    p0 = [200, 400]
+    v = [1, 2.5]
+    stock_prices = np.zeros([1000, N])
+    for i in range(N):
+        stock_prices[:, i] = generate_stock_price(1000, p0[i], v[i])
+    plt.plot(stock_prices)
+    plt.show()
