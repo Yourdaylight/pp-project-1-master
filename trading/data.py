@@ -60,15 +60,15 @@ def generate_stock_price(days, initial_price, volatility):
             stock_prices[day] = NewPriceToday
     return stock_prices
 
-
+def get_data(method):
+    sim_data=None
+    if method=='read':
+        sim_data=np.loadtxt("stock_data_5y.txt")
+    if method=='generate':
+        sim_data=generate_stock_price(1000,200,1)
+    return sim_data
 if __name__=="__main__":
 
     # Make some data
-    N = 2
-    p0 = [200, 400]
-    v = [1, 2.5]
-    stock_prices = np.zeros([1000, N])
-    for i in range(N):
-        stock_prices[:, i] = generate_stock_price(1000, p0[i], v[i])
-    plt.plot(stock_prices)
-    plt.show()
+    array1=get_data("read")
+    array2=get_data("generate")
