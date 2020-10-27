@@ -14,7 +14,10 @@ def moving_average(stock_price, n=7, weights=[]):
     Output:
         ma (ndarray): the n-day (possibly weighted) moving average of the share price over time.
     '''
-    pass
+    if weights ==[]:
+        weights=np.ones(n)/n
+    ma=np.convolve(weights,stock_price)[n-1:n+1]
+    return ma
 
 def oscillator(stock_price, n=7, osc_type='stochastic'):
     '''
@@ -30,3 +33,5 @@ def oscillator(stock_price, n=7, osc_type='stochastic'):
         osc (ndarray): the oscillator level with period $n$ for the stock over time.
     '''
     pass
+
+
