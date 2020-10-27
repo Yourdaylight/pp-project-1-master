@@ -27,16 +27,16 @@ def log_transaction(transaction_type, date, stock, number_of_shares, price, fees
             >>> log_transaction('buy', 5, 2, 10, 100, 50, 'ledger.txt')
     '''
     total = number_of_shares * price
-    log_info="{},{},{},{},{},{},".format(transaction_type,date,stock,number_of_shares)
+    log_info="{},{},{},{},{},".format(transaction_type,date,stock,number_of_shares,price)
     if transaction_type=="buy":
         total+=fees
-        log_info=log_info+"-"+str(total)
+        log_info=log_info+"-"+str(total)+"\n"
     elif transaction_type=="sell":
         total-=fees
-        log_info=log_info+"+"+str(total)
+        log_info=log_info+"+"+str(total)+"\n"
     with open('ledger.txt','a+') as f:
         f.write(log_info)
-        f.close()
+
 
 
 def buy(date, stock, available_capital, stock_prices, fees, portfolio, ledger_file):
@@ -60,7 +60,14 @@ def buy(date, stock, available_capital, stock_prices, fees, portfolio, ledger_fi
         Spend at most 1000 to buy shares of stock 7 on day 21, with fees 30:
             >>> buy(21, 7, 1000, sim_data, 30, portfolio)
     '''
-    pass
+    #calculate the price today
+    price=stock_prices[date][stock]
+    #calculate the shares we would buy
+    shares=int((available_capital-fees)/price)
+    portfolio[stock]+=shares
+    #record the transaction
+    log_transaction("buy",date,stock,shares,price,fees,ledger_file)
+
 
 
 def sell(date, stock, stock_prices, fees, portfolio, ledger_file):
@@ -82,7 +89,13 @@ def sell(date, stock, stock_prices, fees, portfolio, ledger_file):
         To sell all our shares of stock 1 on day 8, with fees 20:
             >>> sell(8, 1, sim_data, 20, portfolio)
     '''
-    pass
+    # calculate  price of the stock today
+    price = stock_prices[date][stock]
+    # calculate the shares we would sell
+    shares = portfolio[stock]
+    portfolio[stock]=0
+    # record the transaction
+    log_transaction("sell", date, stock, shares, price, fees, ledger_file)
 
 
 def create_portfolio(available_amounts, stock_prices, fees):
@@ -103,10 +116,34 @@ def create_portfolio(available_amounts, stock_prices, fees):
         >>> N = sim_data.shape[1]
         >>> portfolio = create_portfolio([1000] * N, sim_data, 40)
     '''
-    pass
+    portfolio=[0 for i in range(len(available_amounts))]
+    stock_nb=0
+    for amount in available_amounts:
+        buy(0, stock_nb, amount, stock_prices, 20, portfolio, "ledger.txt")
+        stock_nb += 1
+    return portfolio
+
+
 
 if __name__=='__main__':
     from trading.data import get_data
-    d=get_data("operation")
-    print(d)
+    read=get_data("read")
+    generate=get_data("generate")
+    stock_data=read[1:,]
+    initial_prices=stock_data[0]
+    closet=[100, 120, 400, 250,300]
+    stock_index=[]
+    for price in closet:
+        stock_nb=np.abs(initial_prices-price)
+        stock_index.append(np.argmin(stock_nb))
+    sim_data=stock_data[:,stock_index]
+    N=sim_data.shape[1]
+    portfolio= create_portfolio([5000]*N,sim_data,20)
+
+
+
+
+
+
+
 

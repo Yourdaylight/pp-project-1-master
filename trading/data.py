@@ -63,7 +63,7 @@ def generate_stock_price(days, initial_price, volatility):
 def get_data(method):
     sim_data=None
     if method=='read':
-        sim_data=np.loadtxt("../stock_data_5y.txt")
+        sim_data=np.loadtxt("./stock_data_5y.txt")
     if method=='generate':
         sim_data=generate_stock_price(1000,200,1)
     return sim_data
@@ -72,3 +72,4 @@ if __name__=="__main__":
     # Make some data
     array1=get_data("read")
     array2=get_data("generate")
+
