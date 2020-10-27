@@ -26,7 +26,17 @@ def log_transaction(transaction_type, date, stock, number_of_shares, price, fees
         buy,5,2,10,100.00,-1050.00
             >>> log_transaction('buy', 5, 2, 10, 100, 50, 'ledger.txt')
     '''
-    pass
+    total = number_of_shares * price
+    log_info="{},{},{},{},{},{},".format(transaction_type,date,stock,number_of_shares)
+    if transaction_type=="buy":
+        total+=fees
+        log_info=log_info+"-"+str(total)
+    elif transaction_type=="sell":
+        total-=fees
+        log_info=log_info+"+"+str(total)
+    with open('ledger.txt','a+') as f:
+        f.write(log_info)
+        f.close()
 
 
 def buy(date, stock, available_capital, stock_prices, fees, portfolio, ledger_file):
@@ -94,3 +104,9 @@ def create_portfolio(available_amounts, stock_prices, fees):
         >>> portfolio = create_portfolio([1000] * N, sim_data, 40)
     '''
     pass
+
+if __name__=='__main__':
+    from trading.data import get_data
+    d=get_data("operation")
+    print(d)
+
