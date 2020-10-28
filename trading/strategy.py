@@ -94,11 +94,11 @@ def momentum(stock_prices,period=7,osc_type='stochastic',amount=5000, fees=20, l
             elif valued[stock][day]>0.7 and valued[stock][day]<0.8:
                 proc.sell(day, stock, stock_prices, fees, portfolio, ledger)
         day += 1
-from trading.data import get_data
-sim_data=get_data("read")[1:,]
-# test1=crossing_averages(sim_data)
-sd=sim_data[:,0][-1]
-test2=momentum(sim_data)
+# from trading.data import get_data
+# sim_data=get_data("read")[1:,]
+# # test1=crossing_averages(sim_data)
+# sd=sim_data[:,0][-1]
+# test2=momentum(sim_data)
 
 
 

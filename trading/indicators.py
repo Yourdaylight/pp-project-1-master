@@ -53,7 +53,6 @@ def oscillator(stock_price, n=7, osc_type='stochastic'):
             #Separate the positive differences from the negative differences.
             positive=period[np.where(period>0)]
             negative=period[np.where(period<0)]
-            print(positive,negative)
             #Calculate the average of all the positive differences, and the absolute value of the average of all the negative differences.
             pos_ave=np.average(positive)
             neg_ave=abs(np.average(negative))

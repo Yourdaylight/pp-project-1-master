@@ -27,7 +27,6 @@ def log_transaction(transaction_type, date, stock, number_of_shares, price, fees
             >>> log_transaction('buy', 5, 2, 10, 100, 50, 'ledger.txt')
     '''
     total = number_of_shares * price
-    print("shares:",number_of_shares,"price:",price)
 
     log_info="{},{},{},{},{},".format(transaction_type,date,stock,number_of_shares,price)
 
