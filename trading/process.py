@@ -27,15 +27,22 @@ def log_transaction(transaction_type, date, stock, number_of_shares, price, fees
             >>> log_transaction('buy', 5, 2, 10, 100, 50, 'ledger.txt')
     '''
     total = number_of_shares * price
+    print("shares:",number_of_shares,"price:",price)
+
     log_info="{},{},{},{},{},".format(transaction_type,date,stock,number_of_shares,price)
+
     if transaction_type=="buy":
         total+=fees
-        log_info=log_info+"-"+str(total)+"\n"
+        log_info=log_info+str(-total)+"\n"
     elif transaction_type=="sell":
         total-=fees
-        log_info=log_info+"+"+str(total)+"\n"
-    with open('ledger.txt','a+') as f:
+        if total<0:
+            log_info = log_info + str(-total) + "\n"
+        else:
+            log_info=log_info+"+"+str(total)+"\n"
+    with open(ledger_file,'a+') as f:
         f.write(log_info)
+        f.close()
 
 
 
@@ -62,6 +69,8 @@ def buy(date, stock, available_capital, stock_prices, fees, portfolio, ledger_fi
     '''
     #calculate the price today
     price=stock_prices[date][stock]
+    if np.isnan(price):
+        return
     #calculate the shares we would buy
     shares=int((available_capital-fees)/price)
     portfolio[stock]+=shares
@@ -91,6 +100,8 @@ def sell(date, stock, stock_prices, fees, portfolio, ledger_file):
     '''
     # calculate  price of the stock today
     price = stock_prices[date][stock]
+    if np.isnan(price):
+        return
     # calculate the shares we would sell
     shares = portfolio[stock]
     portfolio[stock]=0
@@ -119,7 +130,7 @@ def create_portfolio(available_amounts, stock_prices, fees):
     portfolio=[0 for i in range(len(available_amounts))]
     stock_nb=0
     for amount in available_amounts:
-        buy(0, stock_nb, amount, stock_prices, 20, portfolio, "ledger.txt")
+        buy(0, stock_nb, amount, stock_prices, fees, portfolio, "ledger.txt")
         stock_nb += 1
     return portfolio
 
