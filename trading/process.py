@@ -36,9 +36,9 @@ def log_transaction(transaction_type, date, stock, number_of_shares, price, fees
     elif transaction_type=="sell":
         total-=fees
         if total<0:
-            log_info = log_info + str(-total) + "\n"
+            log_info = log_info +str(-total) + "\n"
         else:
-            log_info=log_info+"+"+str(total)+"\n"
+            log_info=log_info+str(total)+"\n"
     with open(ledger_file,'a+') as f:
         f.write(log_info)
         f.close()

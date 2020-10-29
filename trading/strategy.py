@@ -20,7 +20,8 @@ def random(stock_prices, period=7, amount=5000, fees=20, ledger='ledger_random.t
     '''
     decision=['purchase','nothing','sell']
     stock_list=stock_prices[0,]
-    portfolio=proc.create_portfolio([5000]*stock_prices.shape[1],stock_prices,fees)
+    portfolio = proc.create_portfolio([5000] * len(stock_list), stock_prices, fees)
+
     day=0
     while day<stock_prices.shape[0]:
         if day!=0 and (portfolio==np.zeros(len(portfolio))).all():
@@ -54,8 +55,10 @@ def crossing_averages(stock_prices, n=50,m=200, amount=5000, fees=20, ledger='le
     Output: None
     '''
     day = m
-    portfolio = proc.create_portfolio([5000] * stock_prices.shape[1], stock_prices, fees)
     stock_list = stock_prices[0,]
+    portfolio = proc.create_portfolio([5000] * len(stock_list), stock_prices, fees)
+
+
     SMA=np.array([moving_average(stock_prices[:,i],m) for i in range(len(stock_list))])
     FMA=np.array([moving_average(stock_prices[:, i], n) for i in range(len(stock_list))])
     while day<(stock_prices.shape[0]-m):
@@ -71,7 +74,7 @@ def crossing_averages(stock_prices, n=50,m=200, amount=5000, fees=20, ledger='le
         day += 1
 
 
-def momentum(stock_prices,period=7,osc_type='stochastic',amount=5000, fees=20, ledger='ledger_momentum.txt'):
+def momentum(stock_prices,cool_down_period=3,period=7,osc_type='stochastic',amount=5000, fees=20, ledger='ledger_momentum.txt'):
     '''
     Oscillators can help us guess if the price of a share is currently overvalued (overbought) or undervalued (oversold). Generally:
 
@@ -80,9 +83,8 @@ def momentum(stock_prices,period=7,osc_type='stochastic',amount=5000, fees=20, l
 
     '''
     day = period
-    portfolio = proc.create_portfolio([5000] * stock_prices.shape[1], stock_prices, fees)
     stock_list = stock_prices[0,]
-
+    portfolio = proc.create_portfolio([5000] * len(stock_list), stock_prices, fees)
     valued= np.array([oscillator(stock_prices[:, i], period,osc_type) for i in range(len(stock_list))])
     while day < (stock_prices.shape[0] - period):
         if day != 0 and (portfolio == np.zeros(len(portfolio))).all():
@@ -93,7 +95,7 @@ def momentum(stock_prices,period=7,osc_type='stochastic',amount=5000, fees=20, l
                 proc.buy(day, stock, amount, stock_prices, fees, portfolio, ledger)
             elif valued[stock][day]>0.7 and valued[stock][day]<0.8:
                 proc.sell(day, stock, stock_prices, fees, portfolio, ledger)
-        day += 1
+        day += cool_down_period
 # from trading.data import get_data
 # sim_data=get_data("read")[1:,]
 # # test1=crossing_averages(sim_data)
